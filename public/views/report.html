@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Lost or Found Item</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
+</head>
+<body>
+    <div class="container">
+        <h1>Report <span id="itemType">Item</span></h1>
+        <form action="/report" method="POST" enctype="multipart/form-data">
+            <input type="hidden" id="type" name="type" value="">
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required></textarea>
+
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" required>
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="time">Time:</label>
+            <input type="time" id="time" name="time" required>
+
+            <label for="image">Image (optional):</label>
+            <input type="file" id="image" name="image" accept="image/*">
+
+            <button type="submit">Submit Report</button>
+        </form>
+
+        <script>
+            // Dynamically set the type of item (lost/found) based on the query parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const type = urlParams.get('type');
+            document.getElementById('type').value = type;
+            document.getElementById('itemType').textContent = type === 'lost' ? 'Lost' : 'Found';
+        </script>
+
+        <div class="navigation">
+            <a href="/">Back to Home</a>
+            <a href="/items">View All Items</a>
+        </div>
+    </div>
+</body>
+</html>
