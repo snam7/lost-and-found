@@ -11,22 +11,22 @@ const port = 3000;
 
 // Middleware for session management
 app.use(session({
-  secret: 'lost$found', 
+  secret: 'lost$found',
   resave: false,
   saveUninitialized: true,
 }));
 
 // Middleware for serving static files
 app.use(express.static('public'));
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.urlencoded({ extended: true }));
 
 // Set up multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/uploads/'); 
+    cb(null, 'public/uploads/');
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)); 
+    cb(null, Date.now() + path.extname(file.originalname));
   }
 });
 
@@ -38,8 +38,8 @@ app.use(passport.session());
 
 // Google OAuth Strategy setup
 passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,  
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,  
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: 'http://localhost:3000/auth/google/callback'
 },
 function(accessToken, refreshToken, profile, done) {
@@ -63,8 +63,8 @@ function isLoggedIn(req, res, next) {
 }
 
 // Routes
-app.get('/', isLoggedIn, (req, res) => {
-  res.sendFile(__dirname + '/public/views/index.html');
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/views/index.html'); // Home page
 });
 
 app.get('/report', isLoggedIn, (req, res) => {
@@ -76,6 +76,8 @@ let reportedItems = [];
 
 // Modify the POST /report route to store items
 app.post('/report', isLoggedIn, upload.single('image'), (req, res) => {
+  const selectedTags = req.body.tags instanceof Array ? req.body.tags : [req.body.tags];
+
   const itemData = {
     type: req.body.type,
     description: req.body.description,
@@ -83,7 +85,8 @@ app.post('/report', isLoggedIn, upload.single('image'), (req, res) => {
     date: req.body.date,
     time: req.body.time,
     image: req.file ? `/uploads/${req.file.filename}` : null,
-    user: req.user.displayName // Store the name of the user who reported the item
+    user: req.user.displayName, // Store the name of the user who reported the item
+    tags: selectedTags  // Store the selected tags
   };
 
   // Add the reported item to the array
@@ -100,18 +103,33 @@ app.post('/report', isLoggedIn, upload.single('image'), (req, res) => {
   `);
 });
 
-// New GET /items route to display all reported items
+// New GET /items route to display all reported items with optional tag filtering
 app.get('/items', isLoggedIn, (req, res) => {
-  // Display the items in a simple HTML format
+  const filterTag = req.query.tag;
+  
+  // Filter items by selected tag, if a tag is provided
+  const filteredItems = filterTag ? reportedItems.filter(item => item.tags.includes(filterTag)) : reportedItems;
+
   let itemsHtml = `
     <div class="items-container">
       <h1>Reported Items</h1>
+      <div>
+        <label for="tagFilter">Filter by Tag:</label>
+        <select id="tagFilter" onchange="filterItems()">
+          <option value="">All</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Clothing">Clothing</option>
+          <option value="Accessories">Accessories</option>
+          <option value="Books">Books</option>
+          <option value="Personal Items">Personal Items</option>
+        </select>
+      </div>
   `;
 
-  if (reportedItems.length === 0) {
+  if (filteredItems.length === 0) {
     itemsHtml += '<p>No items have been reported yet.</p>';
   } else {
-    reportedItems.forEach(item => {
+    filteredItems.forEach(item => {
       itemsHtml += `
         <div class="item-card">
           <h3>${item.type.charAt(0).toUpperCase() + item.type.slice(1)} Item</h3>
@@ -119,7 +137,8 @@ app.get('/items', isLoggedIn, (req, res) => {
           <p><strong>Location:</strong> ${item.location}</p>
           <p><strong>Date:</strong> ${item.date}</p>
           <p><strong>Time:</strong> ${item.time}</p>
-          <p><strong>Reported by:</strong> ${item.user.displayName}</p>
+          <p><strong>Reported by:</strong> ${item.user}</p>
+          <p><strong>Tags:</strong> ${item.tags.join(', ')}</p>
           ${item.image ? `<img src="${item.image}" alt="Item image" class="item-image">` : ''}
         </div>
         <hr>`;
@@ -133,13 +152,17 @@ app.get('/items', isLoggedIn, (req, res) => {
       <br>
       <a href="/report?type=found" class="btn">Report Found Item</a>
     </div>
+    
+    <script>
+      function filterItems() {
+        const selectedTag = document.getElementById('tagFilter').value;
+        window.location.href = selectedTag ? '/items?tag=' + selectedTag : '/items';
+      }
+    </script>
   `;
 
   res.send(itemsHtml); // Send the HTML response to the user
 });
-
-
-
 
 app.get('/auth/google', passport.authenticate('google', {
   scope: ['profile', 'email']
@@ -151,23 +174,16 @@ app.get('/auth/google/callback',
     res.redirect('/'); 
   });
 
-app.get('/profile', isLoggedIn, (req, res) => {
-  res.send(`Hello, ${req.user.displayName}!<br>Email: ${req.user.emails[0].value}`);
-});
-
-app.get('/logout', (req, res) => {
-  req.logout(() => {
-    res.redirect('/');
+app.get('/logout', (req,res) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect('/'); // Redirect to home after logout
   });
-});
-
-// View all items (this will be expanded later for a real database)
-app.get('/items', isLoggedIn, (req, res) => {
-  // This would show all the reported items (you can modify this to retrieve from a database)
-  res.send('Viewing all lost and found items (to be implemented).');
 });
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
