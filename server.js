@@ -108,6 +108,38 @@ app.get('/account', isLoggedIn, async (req, res) => {
   }
 });
 
+app.get('/account/:username', isLoggedIn, async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    // Fetch the items reported by this user
+    const userItems = await Item.find({ user: username });
+
+    if (userItems.length === 0) {
+      return res.status(404).send('User has not reported any items.');
+    }
+
+    // Generate HTML for the user's items
+    const itemsHtml = userItems.map(item => `
+      <div class="item-card">
+        <h3>${item.type}</h3>
+        <p>${item.description}</p>
+        <p>Location: ${item.location}</p>
+      </div>
+    `).join('');
+
+    // Render the account page for the user
+    let html = await fs.promises.readFile(__dirname + '/public/views/viewAccount.html', 'utf-8');
+    html = html.replace('{{userName}}', username)  // Replace placeholders with the actual data
+               .replace('{{userItems}}', itemsHtml);
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading account page for user:', err);
+    res.status(500).send('Error loading account page.');
+  }
+});
+
 
 // Report Page Route
 app.get('/report', isLoggedIn, (req, res) => {
