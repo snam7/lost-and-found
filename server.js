@@ -158,6 +158,7 @@ app.get('/items', isLoggedIn, async (req, res) => {
               <p><strong>Date:</strong> ${item.date}</p>
               <p><strong>Time:</strong> ${item.time}</p>
               <p><strong>Tags:</strong> ${item.tags.join(', ')}</p>
+              <p><strong>Reported by:</strong> <a href="/account/${encodeURIComponent(item.user)}">${item.user}</a></p>
               ${item.image ? `<img src="${item.image}" alt="Item image" class="item-image">` : ''}
           </div>
       `).join('');
