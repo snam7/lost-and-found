@@ -22,8 +22,16 @@ p {
    Container
 ============================ */
 .container {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+
   max-width: 900px;
-  margin: 40px auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+  margin-bottom: auto;
   padding: 30px;
   background: #fff;
   border-radius: 10px;
@@ -72,9 +80,11 @@ p {
 ============================ */
 .options {
   display: flex;
+  flex-direction: row;
   justify-content: center;
+  align-items: center;
   gap: 20px;
-  margin: 30px 0;
+  margin: 30px 30px;
 }
 
 .button {
@@ -87,6 +97,25 @@ p {
   font-weight: bold;
   text-align: center;
   transition: all 0.3s ease;
+}
+
+.lgn-button {
+  display: inline-block;
+  
+  padding: 12px 24px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: bold;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.lgn-button:hover{
+  background-color: rgb(50, 40, 136);
+  transform: scale(1.05);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
 
 .button:hover {
