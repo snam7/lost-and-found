@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reported Items</title>
+    <link rel="stylesheet" href="/style.css"> <!-- Link to your CSS file -->
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/">Home</a>
+            <a href="/account">My Account</a>
+        </div>
+        <div class="nav-right">
+            <a href="/logout" class="logout-button">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Reported Items</h1>
+        <div>
+            <label for="tagFilter">Filter by Tag:</label>
+            <select id="tagFilter" onchange="filterItems()">
+                <option value="">All</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Books">Books</option>
+                <option value="Personal Items">Personal Items</option>
+            </select>
+        </div>
+
+        <div class="items-container">
+            <!-- Placeholder for items -->
+            {{items}}
+        </div>
+
+        <div class="navigation">
+            <a href="/report?type=lost" class="button">Report Lost Item</a>
+            <a href="/report?type=found" class="button">Report Found Item</a>
+        </div>
+    </div>
+
+    <script>
+        function filterItems() {
+            const selectedTag = document.getElementById('tagFilter').value;
+            window.location.href = selectedTag ? '/items?tag=' + selectedTag : '/items';
+        }
+    </script>
+</body>
+</html>

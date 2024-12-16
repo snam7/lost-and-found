@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/">Home</a>
+            <a href="/account">My Account</a>
+        </div>
+        <div class="nav-right">
+            <a href="/logout" class="logout-button">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
     <div class="container">
         <h1>Welcome to the Campus Lost and Found</h1>
         <p>Please select an option:</p>
@@ -16,7 +28,7 @@
             <a class="button" href="/report?type=found">Report Found Item</a>
             <a class="button" href="/items">View All Items</a>
         </div>
-        
+
         <h2>Log In</h2>
         <a class="button" href="/auth/google">Login with Google</a>
     </div>

@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="/">Home</a>
+            <a href="/account">My Account</a>
+        </div>
+        <div class="nav-right">
+            <a href="/logout" class="logout-button">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Report Form -->
     <div class="container">
         <h1>Report <span id="itemType">Item</span></h1>
         <form action="/report" method="POST" enctype="multipart/form-data">
@@ -26,11 +38,11 @@
 
             <label for="tags">Tags:</label>
             <div id="tags">
-                <input type="checkbox" name="tags" value="Electronics"> Electronics
-                <input type="checkbox" name="tags" value="Clothing"> Clothing
-                <input type="checkbox" name="tags" value="Accessories"> Accessories
-                <input type="checkbox" name="tags" value="Books"> Books
-                <input type="checkbox" name="tags" value="Personal Items"> Personal Items
+                <label><input type="checkbox" name="tags" value="Electronics"> Electronics</label>
+                <label><input type="checkbox" name="tags" value="Clothing"> Clothing</label>
+                <label><input type="checkbox" name="tags" value="Accessories"> Accessories</label>
+                <label><input type="checkbox" name="tags" value="Books"> Books</label>
+                <label><input type="checkbox" name="tags" value="Personal Items"> Personal Items</label>
             </div>
 
             <label for="image">Image (optional):</label>
@@ -47,6 +59,7 @@
             document.getElementById('itemType').textContent = type === 'lost' ? 'Lost' : 'Found';
         </script>
 
+        <!-- Navigation Links -->
         <div class="navigation">
             <a href="/">Back to Home</a>
             <a href="/items">View All Items</a>
